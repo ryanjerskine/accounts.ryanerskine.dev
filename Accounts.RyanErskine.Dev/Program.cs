@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Accounts.RyanErskine.Dev
 {
@@ -13,6 +7,7 @@ namespace Accounts.RyanErskine.Dev
     {
         public static void Main(string[] args)
         {
+            DotNetEnv.Env.Load();
             CreateHostBuilder(args).Build().Run();
         }
 
