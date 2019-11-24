@@ -7,7 +7,9 @@ namespace Accounts.RyanErskine.Dev
     {
         public static void Main(string[] args)
         {
+#if DEBUG
             DotNetEnv.Env.Load();
+#endif
             CreateHostBuilder(args).Build().Run();
         }
 
