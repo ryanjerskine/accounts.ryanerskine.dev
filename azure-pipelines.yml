@@ -1,0 +1,54 @@
+pr:
+- master
+trigger:
+- master
+
+variables:
+  imageRepository: ''
+  containerRegistry: ''
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build and Publish
+  displayName: Build and Publish Stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+      timeoutInMinutes: 5
+
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: restore
+        projects: '**/*.csproj'
+        vstsFeed: 'de5604e8-864e-4ee9-a92c-9eefc03ba003'
+
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        projects: '**/*.csproj'
+        arguments: '--configuration Release'
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: '**/*[Tt]ests/*.csproj'
+        arguments: '--configuration Debug --filter TestCategory=BuildServer '
+
+- stage: Deploy
+  displayName: Deploy Stage
+  jobs:
+  - job: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: AzureWebAppContainer@1
+      inputs:
+        azureSubscription: ''
+        appName: ''
+        containers: $(containerRegistry)/$(imageRepository):$(tag)
