@@ -64,22 +64,22 @@ namespace Accounts.RyanErskine.Dev.Controllers
         }
 
         // GET: /account/login
-        [HttpGet]
+        [HttpGet("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl)
+        public async Task<IActionResult> Login(string ReturnUrl)
         {
             // build a model so we know what to show on the login page
-            var vm = await this.BuildLoginViewModelAsync(returnUrl);
+            var vm = await this.BuildLoginViewModelAsync(ReturnUrl);
 
             if (vm.IsExternalLoginOnly)
                 // we only have one option for logging in and it's an external provider
-                return RedirectToAction("Challenge", "External", new { provider = vm.ExternalLoginScheme, returnUrl });
+                return RedirectToAction("Challenge", "External", new { provider = vm.ExternalLoginScheme, ReturnUrl });
 
             return View(vm);
         }
 
         // POST: /account/login
-        [HttpPost]
+        [HttpPost("login")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model, string button)
@@ -238,7 +238,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl = returnUrl });
             var properties = this._SignInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
         }
@@ -269,7 +269,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             }
 
             if (result.RequiresTwoFactor)
-                return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl });
+                return RedirectToAction(nameof(SendCode), new { returnUrl = returnUrl });
 
             if (result.IsLockedOut)
                 return View("Lockout");
@@ -437,7 +437,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 return View("Error");
 
             if (model.SelectedProvider == "Authenticator")
-                return RedirectToAction(nameof(VerifyAuthenticatorCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+                return RedirectToAction(nameof(VerifyAuthenticatorCode), new { returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
 
             // Generate the token and send it
             var code = await this._UserManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
@@ -451,7 +451,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             else if (model.SelectedProvider == "Phone")
                 await this._SmsSender.SendSmsAsync(await this._UserManager.GetPhoneNumberAsync(user), message);
 
-            return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+            return RedirectToAction(nameof(VerifyCode), new { provider = model.SelectedProvider, returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
         }
 
         // GET: /account/verify-code
@@ -564,9 +564,9 @@ namespace Accounts.RyanErskine.Dev.Controllers
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
-        private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl)
+        private async Task<LoginViewModel> BuildLoginViewModelAsync(string ReturnUrl)
         {
-            var context = await this._Interaction.GetAuthorizationContextAsync(returnUrl);
+            var context = await this._Interaction.GetAuthorizationContextAsync(ReturnUrl);
             if (context?.IdP != null && await this._SchemeProvider.GetSchemeAsync(context.IdP) != null)
             {
                 var local = context.IdP == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
@@ -575,7 +575,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 var vm = new LoginViewModel
                 {
                     EnableLocalLogin = local,
-                    ReturnUrl = returnUrl,
+                    ReturnUrl = ReturnUrl,
                     Username = context?.LoginHint,
                 };
 
@@ -612,7 +612,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             {
                 AllowRememberLogin = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
-                ReturnUrl = returnUrl,
+                ReturnUrl = ReturnUrl,
                 Username = context?.LoginHint,
                 ExternalProviders = providers.ToArray()
             };
@@ -694,7 +694,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             }
         }
 
-        private IActionResult RedirectToLocal(string returnUrl)
-            => Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : (IActionResult)RedirectToAction(nameof(HomeController.Index), "Home");
+        private IActionResult RedirectToLocal(string ReturnUrl)
+            => Url.IsLocalUrl(ReturnUrl) ? Redirect(ReturnUrl) : (IActionResult)RedirectToAction(nameof(HomeController.Index), "Home");
     }
 }

@@ -44,12 +44,12 @@ namespace Accounts.RyanErskine.Dev.Controllers
         /// <summary>
         /// Shows the consent screen
         /// </summary>
-        /// <param name="returnUrl"></param>
+        /// <param name="ReturnUrl"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Index(string returnUrl)
+        public async Task<IActionResult> Index(string ReturnUrl)
         {
-            var vm = await this.BuildViewModelAsync(returnUrl);
+            var vm = await this.BuildViewModelAsync(ReturnUrl);
             if (vm != null)
                 return View("Index", vm);
 
@@ -150,12 +150,12 @@ namespace Accounts.RyanErskine.Dev.Controllers
             return result;
         }
 
-        private async Task<ConsentViewModel> BuildViewModelAsync(string returnUrl, ConsentInputModel model = null)
+        private async Task<ConsentViewModel> BuildViewModelAsync(string ReturnUrl, ConsentInputModel model = null)
         {
-            var request = await this._Interaction.GetAuthorizationContextAsync(returnUrl);
+            var request = await this._Interaction.GetAuthorizationContextAsync(ReturnUrl);
             if (request == null)
             {
-                this._Logger.LogError("No consent request matching request: {0}", returnUrl);
+                this._Logger.LogError("No consent request matching request: {0}", ReturnUrl);
                 return null;
             }
 
@@ -168,21 +168,21 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             var resources = await this._ResourceStore.FindEnabledResourcesByScopeAsync(request.ScopesRequested);
             if (resources != null && (resources.IdentityResources.Any() || resources.ApiResources.Any()))
-                return this.CreateConsentViewModel(model, returnUrl, request, client, resources);
+                return this.CreateConsentViewModel(model, ReturnUrl, request, client, resources);
             else
                 this._Logger.LogError("No scopes matching: {0}", request.ScopesRequested.Aggregate((x, y) => x + ", " + y));
 
             return null;
         }
 
-        private ConsentViewModel CreateConsentViewModel(ConsentInputModel model, string returnUrl, AuthorizationRequest request, Client client, Resources resources)
+        private ConsentViewModel CreateConsentViewModel(ConsentInputModel model, string ReturnUrl, AuthorizationRequest request, Client client, Resources resources)
         {
             var vm = new ConsentViewModel
             {
                 RememberConsent = model?.RememberConsent ?? true,
                 ScopesConsented = model?.ScopesConsented ?? Enumerable.Empty<string>(),
 
-                ReturnUrl = returnUrl,
+                ReturnUrl = ReturnUrl,
 
                 ClientName = client.ClientName ?? client.ClientId,
                 ClientUrl = client.ClientUri,

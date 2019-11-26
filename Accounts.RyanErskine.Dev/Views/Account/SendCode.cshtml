@@ -5,7 +5,7 @@
 
 <h1>@ViewData["Title"].</h1>
 
-<form asp-controller="Account" asp-action="SendCode" asp-route-returnurl="@Model.ReturnUrl" method="post" class="form-horizontal" role="form">
+<form asp-controller="Account" asp-action="SendCode" asp-route-ReturnUrl="@Model.ReturnUrl" method="post" class="form-horizontal" role="form">
     <input asp-for="RememberMe" type="hidden" />
     <div class="row">
         <div class="col-md-8">
@@ -17,5 +17,5 @@
 </form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ /*await Html.RenderPartialAsync("_ValidationScriptsPartial");*/ }
 }
