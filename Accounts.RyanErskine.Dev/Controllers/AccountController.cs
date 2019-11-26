@@ -143,7 +143,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         }
 
         // GET: /account/register
-        [HttpGet]
+        [HttpGet("register")]
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
@@ -152,7 +152,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         }
 
         // POST: /account/register
-        [HttpPost]
+        [HttpPost("register")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
@@ -182,7 +182,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         }
 
         // GET: /account/logout
-        [HttpGet]
+        [HttpGet("logout")]
         public async Task<IActionResult> Logout(string logoutId)
         {
             // build a model so the logout page knows what to display
@@ -197,7 +197,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         }
 
         // POST: /account/logout
-        [HttpPost]
+        [HttpPost("logout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout(LogoutInputModel model)
         {
