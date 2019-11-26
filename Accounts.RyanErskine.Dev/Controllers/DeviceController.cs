@@ -50,7 +50,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             return View("UserCodeConfirmation", vm);
         }
 
-        [HttpPost]
+        [HttpPost("user-code-capture")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserCodeCapture(string userCode)
         {

@@ -2,8 +2,8 @@ using System;
 using System.Diagnostics;
 using Accounts.RyanErskine.Dev.Data;
 using Accounts.RyanErskine.Dev.Models;
+using Accounts.RyanErskine.Dev.Services;
 using IdentityServer4;
-using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +27,10 @@ namespace Accounts.RyanErskine.Dev
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             // Asp Identity
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -56,6 +60,10 @@ namespace Accounts.RyanErskine.Dev
                 builder.AddDeveloperSigningCredential();
             else
                 throw new Exception("Proper signing credentials should be configured prior to deploying");
+
+            // Email and SMS
+            services.AddTransient<IEmailSender, AuthMessageSender>();
+            services.AddTransient<ISmsSender, AuthMessageSender>();
 
             // Auth and Optional Integrations
             var authBuilder = services.AddAuthentication();
@@ -94,17 +102,6 @@ namespace Accounts.RyanErskine.Dev
             {
                 endpoints.MapDefaultControllerRoute();
             });
-        }
-
-        private void InitializeDatabase(IApplicationBuilder app)
-        {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
-                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-                context.Database.Migrate();
-            }
         }
     }
 }

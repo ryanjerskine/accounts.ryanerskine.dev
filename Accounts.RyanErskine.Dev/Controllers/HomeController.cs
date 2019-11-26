@@ -26,37 +26,32 @@ namespace Accounts.RyanErskine.Dev.Controllers
             this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        // GET: /home
         public IActionResult Index()
         {
             if (this._Environment.IsDevelopment())
-            {
                 // only show in development
                 return View();
-            }
 
             this._Logger.LogInformation("Homepage is disabled in production. Returning 404.");
             return NotFound();
         }
 
-        /// <summary>
-        /// Shows the error page
-        /// </summary>
+        // GET: /home/error
         public async Task<IActionResult> Error(string errorId)
         {
             var vm = new ErrorViewModel();
 
             // retrieve error details from identityserver
             var message = await this._Interaction.GetErrorContextAsync(errorId);
-            if (message != null)
-            {
-                vm.Error = message;
 
-                if (!this._Environment.IsDevelopment())
-                {
-                    // only show in development
-                    message.ErrorDescription = null;
-                }
-            }
+            if (message == null)
+                return View("Error", vm);
+
+            vm.Error = message;
+            if (!this._Environment.IsDevelopment())
+                // only show in development
+                message.ErrorDescription = null;
 
             return View("Error", vm);
         }
