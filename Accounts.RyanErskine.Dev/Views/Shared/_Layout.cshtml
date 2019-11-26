@@ -19,9 +19,7 @@
         <link rel="stylesheet" href="~/css/site.css?v4" />
     </environment>
     <environment exclude="Development">
-        <style>
-            /* Inline style goes here for performance */
-        </style>
+        <inline-content href="~/css/site.css"></inline-content>
     </environment>
 </head>
 <body>
@@ -32,9 +30,7 @@
         <script type="text/javascript" src="~/js/site.js?v4"></script>
     </environment>
     <environment exclude="Development">
-        <script>
-            /* Inline script goes here for performance */
-        </script>
+        <inline-content href="~/js/site.js"></inline-content>
     </environment>
     @RenderSection("scripts", required: false)
 </body>
