@@ -360,14 +360,10 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
             // Send an email with this link
-            //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-            //   "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
-            //return View("ForgotPasswordConfirmation");
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            var code = await this._UserManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            await this._EmailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+            return View("forgot-password-confirmation");
         }
 
         // GET: /account/forgot-password-confirmation
@@ -380,7 +376,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         [HttpGet("reset-password")]
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
-            => (code == null) ? View("Error") : View();
+            => (code == null) ? View("error") : View();
 
         // POST: /account/reset-password
         [HttpPost("reset-password")]
@@ -417,7 +413,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         {
             var user = await this._SignInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
-                return View("Error");
+                return View("error");
             var userFactors = await this._UserManager.GetValidTwoFactorProvidersAsync(user);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
@@ -434,7 +430,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             var user = await this._SignInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
-                return View("Error");
+                return View("error");
 
             if (model.SelectedProvider == "Authenticator")
                 return RedirectToAction(nameof(VerifyAuthenticatorCode), new { returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
@@ -442,16 +438,15 @@ namespace Accounts.RyanErskine.Dev.Controllers
             // Generate the token and send it
             var code = await this._UserManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
             if (string.IsNullOrWhiteSpace(code))
-                return View("Error");
+                return View("error");
 
             var message = "Your security code is: " + code;
             if (model.SelectedProvider == "Email")
-
                 await this._EmailSender.SendEmailAsync(await this._UserManager.GetEmailAsync(user), "Security Code", message);
             else if (model.SelectedProvider == "Phone")
                 await this._SmsSender.SendSmsAsync(await this._UserManager.GetPhoneNumberAsync(user), message);
 
-            return RedirectToAction(nameof(VerifyCode), new { provider = model.SelectedProvider, returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
+            return RedirectToAction("verify-code", new { provider = model.SelectedProvider, returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
         }
 
         // GET: /account/verify-code
@@ -462,7 +457,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             // Require that the user has already logged in via username/password or external login
             var user = await this._SignInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
-                return View("Error");
+                return View("error");
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
@@ -485,7 +480,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             if (result.IsLockedOut)
             {
                 this._Logger.LogWarning(7, "User account locked out.");
-                return View("Lockout");
+                return View("lockout");
             }
 
 
@@ -501,7 +496,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             // Require that the user has already logged in via username/password or external login
             var user = await this._SignInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
-                return View("Error");
+                return View("error");
             return View(new VerifyAuthenticatorCodeViewModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
@@ -524,7 +519,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             if (result.IsLockedOut)
             {
                 this._Logger.LogWarning(7, "User account locked out.");
-                return View("Lockout");
+                return View("lockout");
             }
 
             ModelState.AddModelError(string.Empty, "Invalid code.");
@@ -539,7 +534,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             // Require that the user has already logged in via username/password or external login
             var user = await this._SignInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
-                return View("Error");
+                return View("error");
             return View(new UseRecoveryCodeViewModel { ReturnUrl = returnUrl });
         }
 

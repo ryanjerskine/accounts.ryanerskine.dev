@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SendGrid;
 
 namespace Accounts.RyanErskine.Dev
 {
@@ -62,6 +63,10 @@ namespace Accounts.RyanErskine.Dev
                 throw new Exception("Proper signing credentials should be configured prior to deploying");
 
             // Email and SMS
+            services.AddSendGrid(options =>
+            {
+                options.ApiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
+            });
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
 

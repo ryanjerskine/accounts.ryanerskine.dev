@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Accounts.RyanErskine.Dev.Services
 {
@@ -7,10 +11,23 @@ namespace Accounts.RyanErskine.Dev.Services
     // For more details see this link http://go.microsoft.com/fwlink/?LinkID=532713
     public class AuthMessageSender : IEmailSender, ISmsSender
     {
-        public Task SendEmailAsync(string email, string subject, string message)
+        private readonly ISendGridClient _SendGridClient;
+
+        public AuthMessageSender(ISendGridClient sendGridClient)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            this._SendGridClient = sendGridClient ?? throw new ArgumentNullException(nameof(sendGridClient));
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string message, CancellationToken cancellationToken = default)
+        {
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress(Environment.GetEnvironmentVariable("SendGridFromEmail"), Environment.GetEnvironmentVariable("SendGridFromName")),
+                Subject = subject,
+                PlainTextContent = message
+            };
+            msg.AddTo(new EmailAddress(email));
+            await this._SendGridClient.SendEmailAsync(msg, cancellationToken);
         }
 
         public Task SendSmsAsync(string number, string message)
