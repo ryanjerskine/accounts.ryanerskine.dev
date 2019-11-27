@@ -18,7 +18,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
     /// This controller processes the consent UI
     /// </summary>
     [SecurityHeaders]
-    [Authorize]
+    //[Authorize]
     public class ConsentController : Controller
     {
         private readonly IIdentityServerInteractionService _Interaction;
@@ -53,7 +53,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             if (vm != null)
                 return View("Index", vm);
 
-            return View("Error");
+            return View("error");
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             if (result.ShowView)
                 return View("Index", result.ViewModel);
 
-            return View("Error");
+            return View("error");
         }
 
         /*****************************************/
@@ -175,7 +175,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             return null;
         }
 
-        private ConsentViewModel CreateConsentViewModel(ConsentInputModel model, string ReturnUrl, AuthorizationRequest request, Client client, Resources resources)
+        private ConsentViewModel CreateConsentViewModel(ConsentInputModel model, string ReturnUrl, AuthorizationRequest request, Client client, IdentityServer4.Models.Resources resources)
         {
             var vm = new ConsentViewModel
             {
@@ -211,7 +211,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                     Checked = check || identity.Required
                 };
 
-        public ScopeViewModel CreateScopeViewModel(Scope scope, bool check)
+        private ScopeViewModel CreateScopeViewModel(Scope scope, bool check)
             => new ScopeViewModel
                 {
                     Name = scope.Name,

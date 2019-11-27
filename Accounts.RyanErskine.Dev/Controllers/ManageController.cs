@@ -65,7 +65,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             ManageMessageId? message = ManageMessageId.Error;
             var user = await this._UserManager.GetUserAsync(HttpContext.User);
             if (user == null)
-                return RedirectToAction(nameof(ManageLogins), new { message = message });
+                return RedirectToAction("manage-logins", new { message = message });
 
             var result = await this._UserManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
             if (result.Succeeded)
@@ -73,7 +73,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 await this._SignInManager.SignInAsync(user, isPersistent: false);
                 message = ManageMessageId.RemoveLoginSuccess;
             }
-            return RedirectToAction(nameof(ManageLogins), new { message = message });
+            return RedirectToAction("manage-logins", new { message = message });
         }
 
         // GET: /manage/add-phone-number
@@ -94,7 +94,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             var user = await this._UserManager.GetUserAsync(HttpContext.User);
             var code = await this._UserManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await this._SmsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
-            return RedirectToAction(nameof(VerifyPhoneNumber), new { phoneNumber = model.PhoneNumber });
+            return RedirectToAction("verify-phone-number", new { phoneNumber = model.PhoneNumber });
         }
 
         // POST: /manage/reset-authenticator-key
@@ -108,7 +108,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 await this._UserManager.ResetAuthenticatorKeyAsync(user);
                 this._Logger.LogInformation(1, "User reset authenticator key.");
             }
-            return RedirectToAction(nameof(Index), "manage");
+            return RedirectToAction("Index", "manage");
         }
 
         // POST: /manage/generate-recovery-code
@@ -138,7 +138,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 await this._SignInManager.SignInAsync(user, isPersistent: false);
                 this._Logger.LogInformation(1, "User enabled two-factor authentication.");
             }
-            return RedirectToAction(nameof(Index), "manage");
+            return RedirectToAction("Index", "manage");
         }
 
         // POST: /manage/disable-two-factor-authentication
@@ -153,7 +153,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 await this._SignInManager.SignInAsync(user, isPersistent: false);
                 this._Logger.LogInformation(2, "User disabled two-factor authentication.");
             }
-            return RedirectToAction(nameof(Index), "Manage");
+            return RedirectToAction("Index", "Manage");
         }
 
         // GET: /manage/verify-phone-number
@@ -188,7 +188,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             }
 
             await this._SignInManager.SignInAsync(user, isPersistent: false);
-            return RedirectToAction(nameof(Index), new { message = ManageMessageId.AddPhoneSuccess });
+            return RedirectToAction("Index", new { message = ManageMessageId.AddPhoneSuccess });
         }
 
         // GET: /manage/remove-phone-number
@@ -198,14 +198,14 @@ namespace Accounts.RyanErskine.Dev.Controllers
         {
             var user = await this._UserManager.GetUserAsync(HttpContext.User);
             if (user == null)
-                return RedirectToAction(nameof(Index), new { message = ManageMessageId.Error });
+                return RedirectToAction("Index", new { message = ManageMessageId.Error });
 
             var result = await this._UserManager.SetPhoneNumberAsync(user, null);
             if (!result.Succeeded)
-                return RedirectToAction(nameof(Index), new { message = ManageMessageId.Error });
+                return RedirectToAction("Index", new { message = ManageMessageId.Error });
 
             await this._SignInManager.SignInAsync(user, isPersistent: false);
-            return RedirectToAction(nameof(Index), new { message = ManageMessageId.RemovePhoneSuccess });
+            return RedirectToAction("Index", new { message = ManageMessageId.RemovePhoneSuccess });
         }
 
         // GET: /manage/change-password
@@ -223,14 +223,14 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             var user = await this._UserManager.GetUserAsync(HttpContext.User);
             if (user == null)
-                return RedirectToAction(nameof(Index), new { message = ManageMessageId.Error });
+                return RedirectToAction("Index", new { message = ManageMessageId.Error });
 
             var result = await this._UserManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             if (result.Succeeded)
             {
                 await this._SignInManager.SignInAsync(user, isPersistent: false);
                 this._Logger.LogInformation(3, "User changed their password successfully.");
-                return RedirectToAction(nameof(Index), new { message = ManageMessageId.ChangePasswordSuccess });
+                return RedirectToAction("Index", new { message = ManageMessageId.ChangePasswordSuccess });
             }
 
             AddErrors(result);
@@ -252,13 +252,13 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             var user = await this._UserManager.GetUserAsync(HttpContext.User);
             if (user == null)
-                return RedirectToAction(nameof(Index), new { message = ManageMessageId.Error });
+                return RedirectToAction("Index", new { message = ManageMessageId.Error });
 
             var result = await this._UserManager.AddPasswordAsync(user, model.NewPassword);
             if (result.Succeeded)
             {
                 await this._SignInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction(nameof(Index), new { message = ManageMessageId.SetPasswordSuccess });
+                return RedirectToAction("Index", new { message = ManageMessageId.SetPasswordSuccess });
             }
             AddErrors(result);
             return View(model);
@@ -302,15 +302,15 @@ namespace Accounts.RyanErskine.Dev.Controllers
         {
             var user = await this._UserManager.GetUserAsync(HttpContext.User);
             if (user == null)
-                return View("Error");
+                return View("error");
 
             var info = await _SignInManager.GetExternalLoginInfoAsync(await this._UserManager.GetUserIdAsync(user));
             if (info == null)
-                return RedirectToAction(nameof(ManageLogins), new { message = ManageMessageId.Error });
+                return RedirectToAction("manage-logins", new { message = ManageMessageId.Error });
 
             var result = await this._UserManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
-            return RedirectToAction(nameof(ManageLogins), new { message = message });
+            return RedirectToAction("manage-logins", new { message = message });
         }
 
 

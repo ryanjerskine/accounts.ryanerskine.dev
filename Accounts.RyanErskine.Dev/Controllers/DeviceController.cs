@@ -41,13 +41,13 @@ namespace Accounts.RyanErskine.Dev.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery(Name = "user_code")] string userCode)
         {
-            if (string.IsNullOrWhiteSpace(userCode)) return View("UserCodeCapture");
+            if (string.IsNullOrWhiteSpace(userCode)) return View("user-code-capture");
 
             var vm = await this.BuildViewModelAsync(userCode);
             if (vm == null) return View("Error");
 
             vm.ConfirmUserCode = true;
-            return View("UserCodeConfirmation", vm);
+            return View("user-code-confirmation", vm);
         }
 
         [HttpPost("user-code-capture")]
@@ -55,9 +55,9 @@ namespace Accounts.RyanErskine.Dev.Controllers
         public async Task<IActionResult> UserCodeCapture(string userCode)
         {
             var vm = await this.BuildViewModelAsync(userCode);
-            if (vm == null) return View("Error");
+            if (vm == null) return View("error");
 
-            return View("UserCodeConfirmation", vm);
+            return View("user-code-confirmation", vm);
         }
 
         [HttpPost]
@@ -67,9 +67,9 @@ namespace Accounts.RyanErskine.Dev.Controllers
             if (model == null) throw new ArgumentNullException(nameof(model));
 
             var result = await this.ProcessConsent(model);
-            if (result.HasValidationError) return View("Error");
+            if (result.HasValidationError) return View("error");
 
-            return View("Success");
+            return View("success");
         }
 
         private async Task<ProcessConsentResult> ProcessConsent(DeviceAuthorizationInputModel model)
@@ -165,7 +165,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             return null;
         }
 
-        private DeviceAuthorizationViewModel CreateConsentViewModel(string userCode, DeviceAuthorizationInputModel model, Client client, Resources resources)
+        private DeviceAuthorizationViewModel CreateConsentViewModel(string userCode, DeviceAuthorizationInputModel model, Client client, IdentityServer4.Models.Resources resources)
         {
             var vm = new DeviceAuthorizationViewModel
             {

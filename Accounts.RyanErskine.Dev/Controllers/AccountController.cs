@@ -73,7 +73,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             if (vm.IsExternalLoginOnly)
                 // we only have one option for logging in and it's an external provider
-                return RedirectToAction("Challenge", "External", new { provider = vm.ExternalLoginScheme, ReturnUrl });
+                return RedirectToAction("challenge", "external", new { provider = vm.ExternalLoginScheme, ReturnUrl });
 
             return View(vm);
         }
@@ -101,7 +101,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 if (await this._ClientStore.IsPkceClientAsync(context.ClientId))
                     // if the client is PKCE then we assume it's native, so this change in how to
                     // return the response is for better UX for the end user.
-                    return View("Redirect", new RedirectViewModel { RedirectUrl = model.ReturnUrl });
+                    return View("redirect", new RedirectViewModel { RedirectUrl = model.ReturnUrl });
 
                 return Redirect(model.ReturnUrl);
             }
@@ -119,7 +119,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                         if (await this._ClientStore.IsPkceClientAsync(context.ClientId))
                             // if the client is PKCE then we assume it's native, so this change in how to
                             // return the response is for better UX for the end user.
-                            return View("Redirect", new RedirectViewModel { RedirectUrl = model.ReturnUrl });
+                            return View("redirect", new RedirectViewModel { RedirectUrl = model.ReturnUrl });
                         // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                         return Redirect(model.ReturnUrl);
                     }
@@ -147,7 +147,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            ViewData["returnUrl"] = returnUrl;
             return View();
         }
 
@@ -157,7 +157,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            ViewData["returnUrl"] = returnUrl;
 
             if (!ModelState.IsValid)
                 return View(model);
@@ -172,12 +172,11 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
             // Send an email with this link
-            //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-            //    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+            var code = await this._UserManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action("confirm-email", "account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            await this._EmailSender.SendEmailAsync(model.Email, Resources.EmailMessages.ConfirmAccountSubject, string.Format(Resources.EmailMessages.ConfirmAccountMessage, callbackUrl));
             await this._SignInManager.SignInAsync(user, isPersistent: false);
-           this. _Logger.LogInformation(3, "User created a new account with password.");
+            this. _Logger.LogInformation(3, "User created a new account with password.");
             return this.RedirectToLocal(returnUrl);
         }
 
@@ -218,7 +217,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 // build a return URL so the upstream provider will redirect back
                 // to us after the user has logged out. this allows us to then
                 // complete our single sign-out processing.
-                string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
+                string url = Url.Action("logout", new { logoutId = vm.LogoutId });
                 // this triggers a redirect to the external provider for sign-out
                 return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
             }
@@ -251,12 +250,12 @@ namespace Accounts.RyanErskine.Dev.Controllers
             if (remoteError != null)
             {
                 ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-                return View(nameof(Login));
+                return View("login");
             }
 
             var info = await this._SignInManager.GetExternalLoginInfoAsync();
             if (info == null)
-                return RedirectToAction(nameof(Login));
+                return RedirectToAction("login");
 
             // Sign in the user with this external login provider if the user already has a login.
             var result = await this._SignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
@@ -269,16 +268,16 @@ namespace Accounts.RyanErskine.Dev.Controllers
             }
 
             if (result.RequiresTwoFactor)
-                return RedirectToAction(nameof(SendCode), new { returnUrl = returnUrl });
+                return RedirectToAction("send-code", new { returnUrl = returnUrl });
 
             if (result.IsLockedOut)
-                return View("Lockout");
+                return View("lockout");
 
             // If the user does not have an account, then ask the user to create an account.
-            ViewData["ReturnUrl"] = returnUrl;
-            ViewData["ProviderDisplayName"] = info.ProviderDisplayName;
+            ViewData["returnUrl"] = returnUrl;
+            ViewData["providerDisplayName"] = info.ProviderDisplayName;
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
+            return View("external-login-confirmation", new ExternalLoginConfirmationViewModel { Email = email });
         }
 
         // POST: /account/external-login-confirmation
@@ -289,21 +288,21 @@ namespace Accounts.RyanErskine.Dev.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewData["ReturnUrl"] = returnUrl;
+                ViewData["returnUrl"] = returnUrl;
                 return View(model);
             }
 
             // Get the information about the user from the external login provider
             var info = await this._SignInManager.GetExternalLoginInfoAsync();
             if (info == null)
-                return View("ExternalLoginFailure");
+                return View("external-login-failure");
             var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
             var result = await this._UserManager.CreateAsync(user);
 
             if (!result.Succeeded)
             {
                 this.AddErrors(result);
-                ViewData["ReturnUrl"] = returnUrl;
+                ViewData["returnUrl"] = returnUrl;
                 return View(model);
             }
 
@@ -311,7 +310,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
             if (!result.Succeeded)
             {
                 this.AddErrors(result);
-                ViewData["ReturnUrl"] = returnUrl;
+                ViewData["returnUrl"] = returnUrl;
                 return View(model);
             }
 
@@ -328,14 +327,14 @@ namespace Accounts.RyanErskine.Dev.Controllers
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
-                return View("Error");
+                return View("error");
 
             var user = await this._UserManager.FindByIdAsync(userId);
             if (user == null)
-                return View("Error");
+                return View("error");
 
             var result = await this._UserManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            return View(result.Succeeded ? "confirm-email" : "error");
         }
 
         // GET: /account/forgot-password
@@ -356,13 +355,13 @@ namespace Accounts.RyanErskine.Dev.Controllers
             var user = await this._UserManager.FindByEmailAsync(model.Email);
             if (user == null || !(await this._UserManager.IsEmailConfirmedAsync(user)))
                 // Don't reveal that the user does not exist or is not confirmed
-                return View("ForgotPasswordConfirmation");
+                return View("forgot-password-confirmation");
 
             // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
             // Send an email with this link
             var code = await this._UserManager.GeneratePasswordResetTokenAsync(user);
-            var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            await this._EmailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+            var callbackUrl = Url.Action("reset-password", "account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            await this._EmailSender.SendEmailAsync(model.Email, Resources.EmailMessages.ResetPasswordSubject, string.Format(Resources.EmailMessages.ResetPasswordMessage, callbackUrl));
             return View("forgot-password-confirmation");
         }
 
@@ -390,11 +389,11 @@ namespace Accounts.RyanErskine.Dev.Controllers
 
             if (user == null)
                 // Don't reveal that the user does not exist
-                return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
+                return RedirectToAction("reset-password-confirmation", "account");
 
             var result = await this._UserManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
-                return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
+                return RedirectToAction("reset-password-confirmation", "account");
 
             this.AddErrors(result);
             return View();
@@ -433,7 +432,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 return View("error");
 
             if (model.SelectedProvider == "Authenticator")
-                return RedirectToAction(nameof(VerifyAuthenticatorCode), new { returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
+                return RedirectToAction("verify-authenticator-code", new { returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
 
             // Generate the token and send it
             var code = await this._UserManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
