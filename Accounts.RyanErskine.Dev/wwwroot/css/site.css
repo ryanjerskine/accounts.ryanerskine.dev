@@ -440,7 +440,9 @@ input:-webkit-autofill {
     animation-name: fadeIn
 }
 
+/*******************/
 /* Material Button */
+/*******************/
 .mat-button.primary {
     color: white;
     background-color: #645efe;
@@ -566,4 +568,10 @@ input:-webkit-autofill {
 .home-page a:first-of-type {
     width: 162px;
     margin-right: 25px;
+}
+@media only screen and (max-width:1080px) {
+    .home-page h1 { font-size: 52px; }
+}
+@media only screen and (max-width:740px) {
+    .home-page h1 { font-size: 36px; }
 }

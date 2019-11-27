@@ -46,14 +46,14 @@ namespace Accounts.RyanErskine.Dev.Controllers
             var message = await this._Interaction.GetErrorContextAsync(errorId);
 
             if (message == null)
-                return View("Error", vm);
+                return View("error", vm);
 
             vm.Error = message;
             if (!this._Environment.IsDevelopment())
                 // only show in development
                 message.ErrorDescription = null;
 
-            return View("Error", vm);
+            return View("error", vm);
         }
     }
 }
