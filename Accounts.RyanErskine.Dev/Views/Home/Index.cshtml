@@ -1,11 +1,20 @@
 ﻿@{
     var version = typeof(IdentityServer4.Hosting.IdentityServerMiddleware).Assembly.GetName().Version.ToString();
+    var loggedIn = User.Identity.IsAuthenticated;
+    var siteName = Environment.GetEnvironmentVariable("SiteName");
 }
 
 <div class="fullscreen-image-wrapper">
     <div class="home-page">
-        <h1>Welcome to ryanerskine.dev</h1>
-        <a href="~/account/login" class="mat-button primary large">Login</a>
-        <a href="~/account/register" class="mat-button accent large">Create an account</a>
+        <h1>Welcome to @siteName</h1>
+        @if (loggedIn)
+        {
+            <a href="~/manage" class="mat-button primary large">Manage Account</a>
+        }
+        else
+        {
+            <a href="~/account/login" class="mat-button primary large">Login</a>
+            <a href="~/account/register" class="mat-button accent large">Create an Account</a>
+        }
     </div>
 </div>

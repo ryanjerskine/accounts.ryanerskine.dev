@@ -1,0 +1,19 @@
+﻿@{ 
+    ViewData["Title"] = "_LoginLayout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="login-layout fullscreen-image-wrapper">
+    <div class="left">
+        <img />
+        <div class="text-wrapper">
+            <span class="company-text">National Indemnity Company</span>
+            <span class="sub-company-text">Strength, Stability, and Integrity</span>
+        </div>
+    </div>
+    <div class="right">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </div>
+</div>

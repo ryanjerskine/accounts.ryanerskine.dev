@@ -575,3 +575,22 @@ input:-webkit-autofill {
 @media only screen and (max-width:740px) {
     .home-page h1 { font-size: 36px; }
 }
+/*****************/
+/*  Layout Pages */
+/*****************/
+.login-layout > .left {
+    width: calc(100% - 500px);
+    max-width: 90%;
+    height: 100vh;
+    left: 0;
+    text-align: center;
+    position: absolute;
+}
+.login-layout > .right {
+    width: 500px;
+    max-width: 100%;
+    background-color: white;
+    min-height: 100vh;
+    position: absolute;
+    right: 0;
+}
