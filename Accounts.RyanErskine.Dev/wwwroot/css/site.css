@@ -356,6 +356,19 @@ h1 { font-size: 75px; }
 @media only screen and (max-width:740px) {
     .home-page h1 { font-size: 36px; }
 }
+.confirm-email-page {
+    position: absolute;
+    top: calc(50% - 190px);
+    text-align: center;
+    width: 100%;
+}
+.confirm-email-page p {
+    font-size: 18px;
+    line-height: 25px;
+}
+.confirm-email-page a {
+    color: white;
+}
 /*****************/
 /*  Layout Pages */
 /*****************/

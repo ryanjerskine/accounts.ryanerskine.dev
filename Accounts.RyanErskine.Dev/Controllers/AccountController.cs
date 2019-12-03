@@ -334,7 +334,7 @@ namespace Accounts.RyanErskine.Dev.Controllers
                 return View("error");
 
             var result = await this._UserManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "confirm-email" : "error");
+            return View(result.Succeeded ? "ConfirmEmail" : "error");
         }
 
         // GET: /account/forgot-password
