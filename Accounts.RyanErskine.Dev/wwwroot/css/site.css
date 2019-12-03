@@ -4,232 +4,38 @@ for details on configuring this project to bundle and minify static web assets. 
 body, html {
     margin: 0;
     padding: 0;
-    color: #525252;
     overflow: hidden;
     min-height: 100vh;
-    font-family: Roboto,sans-serif
+    font-family: Roboto,sans-serif;
 }
-
-button {
-    cursor: pointer;
-    font-family: Roboto,sans-serif
-}
-
-button[type=submit] {
-    float: right
-}
-
-a {
-    color: #3f51b4;
-    cursor: pointer;
-    text-decoration: none
-}
-a:hover {
-    text-decoration: underline
-}
-a:active {
-    text-decoration: underline
-}
-
-form {
-    width: 100%
-}
-
-.hidden {
-    display: none
-}
-
 body > div {
     content: " ";
     display: block;
     height: 0;
-    clear: both
+    clear: both;
 }
-
-.login-left {
-    width: calc(100% - 500px);
-    max-width: 90%;
-    height: 100vh;
-    left: 0;
-    text-align: center;
-    position: absolute
-}
-
-.login-left > svg {
-    color: #fff;
-    height: 85px;
-    width: 85px;
-    position: absolute;
-    left: calc(50% - 42px)
-}
-
-@media only screen and (max-width:1110px) {
-    .login-left > svg {
-        display: none
-    }
-}
-
-.login-left > .text-wrapper {
-    top: calc(50vh - 117px);
-    position: relative;
-    display: inline-block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center
-}
-
-@media only screen and (max-width:1110px) {
-    .login-left > .text-wrapper {
-        display: none
-    }
-}
-
-.login-left > .text-wrapper > .company-text {
-    color: #fff;
-    font-weight: 700;
-    font-size: 75px
-}
-
-.login-left > .text-wrapper > .sub-company-text {
-    display: block;
-    font-weight: 700;
-    font-size: 22px;
-    text-align: right;
-    padding-right: 25px;
-    color: #3f51b4
-}
-
-.login-right {
-    width: 500px;
-    max-width: 100%;
-    background-color: #fff;
-    min-height: 100vh;
-    position: absolute;
-    right: 0
-}
-
-@media only screen and (max-width:1110px) and (min-width:501px) {
-    .login-right {
-        left: calc(50% - 250px);
-        top: calc(50% - 300px);
-        min-height: unset
-    }
-}
-
-.login-right > .container {
-    padding: 0 3em 6em 3em
-}
-
-.login-right > .container > svg {
-    width: 75px;
-    height: 75px;
-    display: block;
-    margin-top: 15px;
-    margin-bottom: -32px;
-    margin-left: auto;
-    margin-right: auto;
-    visibility: hidden
-}
-
-@media only screen and (max-width:1110px) {
-    .login-right > .container > svg {
-        visibility: visible
-    }
-}
-
-.login-right > .container > h1 {
-    color: #3f51b4;
-    font-size: 30px;
-    margin-bottom: 1.5em;
-    margin-left: -25px;
-    margin-right: -25px;
-    position: relative;
-    visibility: hidden;
-    text-align: center
-}
-
-@media only screen and (max-width:1110px) {
-    .login-right > .container > h1 {
-        visibility: visible
-    }
-}
-
-@media only screen and (max-width:400px) {
-    .login-right > .container > h1 {
-        font-size: 26px
-    }
-}
-
-.login-right > .container > form > h2 {
-    color: #a9a9a9;
-    font-weight: 400;
-    font-size: 30px;
-    margin-bottom: 1.5em
-}
-
-.login-right > .container > form > a {
-    margin-top: -46px;
-    display: block;
-    float: right;
-    font-style: italic;
-    position: relative;
-    z-index: 1
-}
-
-@media only screen and (max-width:400px) {
-    .login-right > .container > form > a {
-        float: none;
-        margin-top: 0
-    }
-}
-
-.login-right > .container > form > .no-account {
-    font-size: 18px;
-    position: absolute;
-    bottom: 1.5rem
-}
-
-.login-right > .container > form > .no-account a {
-    font-weight: 700
-}
-
-.login-right > .container > form > .button-wrapper {
-    display: block;
-    width: 100%;
-    height: 60px
-}
-
-.login-right > .container > form > .button-wrapper > button {
-    height: 40px;
-    padding-left: 30px;
-    padding-right: 30px;
-    background-color: #3f51b4;
-    border: 2px solid #3f51b4;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 36px;
-    margin-top: 20px
-}
-
+/********************/
+/*  Input Elements  */
+/********************/
+form { width: 100%; }
+input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px #fff inset; }
 input:not([type=checkbox]) {
     display: block;
-    width: 100%
+    width: 100%;
 }
-
 .group {
     position: relative;
-    margin-bottom: 45px
+    margin-bottom: 45px;
 }
 .group input {
     font-size: 18px;
     padding: 10px 10px 10px 5px;
     display: block;
     border: none;
-    border-bottom: 1px solid #cecece
+    border-bottom: 1px solid #cecece;
 }
 .group input:focus {
-    outline: 0
+    outline: 0;
 }
 .group label {
     color: #999;
@@ -241,16 +47,16 @@ input:not([type=checkbox]) {
     top: 10px;
     transition: .2s ease all;
     -moz-transition: .2s ease all;
-    -webkit-transition: .2s ease all
+    -webkit-transition: .2s ease all;
 }
 .group input:focus ~ label, .group.has-value input ~ label {
     top: -20px;
     font-size: 14px;
-    color: #3f51b4
+    color: #3f51b4;
 }
 .group .bar {
     position: relative;
-    display: block
+    display: block;
 }
 .group .bar:after, .group .bar:before {
     content: '';
@@ -261,20 +67,12 @@ input:not([type=checkbox]) {
     background: #3f51b4;
     transition: .2s ease all;
     -moz-transition: .2s ease all;
-    -webkit-transition: .2s ease all
+    -webkit-transition: .2s ease all;
 }
-.group .bar:before {
-    left: 50%
-}
-.group .bar:after {
-    right: 50%
-}
-.group input:focus ~ .bar:before {
-    width: calc(50% + 15px)
-}
-.group input:focus ~ .bar:after {
-    width: 50%
-}
+.group .bar:before { left: 50%; }
+.group .bar:after { right: 50%; }
+.group input:focus ~ .bar:before { width: calc(50% + 15px); }
+.group input:focus ~ .bar:after { width: 50%; }
 .group .highlight {
     position: absolute;
     height: 60%;
@@ -282,53 +80,46 @@ input:not([type=checkbox]) {
     top: 25%;
     left: 0;
     pointer-events: none;
-    opacity: .5
+    opacity: .5;
 }
 .group input:focus ~ .highlight {
     -webkit-animation: inputHighlighter .3s ease;
-    animation: inputHighlighter .3s ease
+    animation: inputHighlighter .3s ease;
 }
-
 @-webkit-keyframes inputHighlighter {
-    from {
-        background: #3f51b4
-    }
-
+    from { background: #3f51b4; }
     to {
         width: 0;
-        background: 0 0
+        background: 0 0;
     }
 }
-
 @keyframes inputHighlighter {
-    from {
-        background: #3f51b4
-    }
-
+    from { background: #3f51b4; }
     to {
         width: 0;
-        background: 0 0
+        background: 0 0;
     }
 }
-
+/**************/
+/*  Checkbox  */
+/**************/
 .md-checkbox {
     position: relative;
     margin: 26px 0;
-    text-align: left
+    text-align: left;
 }
-.md-checkbox.md-checkbox-inline {
-    display: inline-block
-}
+.md-checkbox.md-checkbox-inline { display: inline-block; }
 .md-checkbox label {
     cursor: pointer;
     margin-left: -10px;
-    padding-left: 10px
+    padding-left: 10px;
 }
-.md-checkbox label:after, .md-checkbox label:before {
+.md-checkbox label:after,
+.md-checkbox label:before {
     content: "";
     position: absolute;
     left: 0;
-    top: 0
+    top: 0;
 }
 .md-checkbox label:before {
     width: 16px;
@@ -338,16 +129,16 @@ input:not([type=checkbox]) {
     border-radius: 2px;
     cursor: pointer;
     -webkit-transition: background .3s;
-    transition: background .3s
+    transition: background .3s;
 }
 .md-checkbox input[type=checkbox] {
     outline: 0;
     margin-right: 10px;
-    visibility: hidden
+    visibility: hidden;
 }
 .md-checkbox input[type=checkbox]:checked + label:before {
     background: #3f51b4;
-    border-color: #3f51b4
+    border-color: #3f51b4;
 }
 .md-checkbox input[type=checkbox]:checked + label:after {
     -webkit-transform: rotate(-45deg);
@@ -358,19 +149,10 @@ input:not([type=checkbox]) {
     height: 5px;
     border: 2px solid #fff;
     border-top-style: none;
-    border-right-style: none
+    border-right-style: none;
 }
-.md-checkbox input[type=checkbox]:disabled + label:before {
-    border-color: rgba(0,0,0,.26)
-}
-.md-checkbox input[type=checkbox]:disabled:checked + label:before {
-    background: rgba(0,0,0,.26)
-}
-
-input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 30px #fff inset
-}
-
+.md-checkbox input[type=checkbox]:disabled + label:before { border-color: rgba(0,0,0,.26); }
+.md-checkbox input[type=checkbox]:disabled:checked + label:before { background: rgba(0,0,0,.26); }
 /****************/
 /*  Animations  */
 /****************/
@@ -420,10 +202,21 @@ input:-webkit-autofill {
     -webkit-animation-name: fadeIn;
     animation-name: fadeIn
 }
-
-/*******************/
-/* Material Button */
-/*******************/
+/*********************/
+/*  Material Button  */
+/*********************/
+button {
+    cursor: pointer;
+    font-family: Roboto,sans-serif
+}
+button[type=submit] { float: right; }
+a {
+    color: #3f51b4;
+    cursor: pointer;
+    text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+a:active { text-decoration: underline; }
 .mat-button.primary {
     color: white;
     background-color: #645efe;
@@ -521,16 +314,15 @@ input:-webkit-autofill {
 .mat-button:disabled::after {
     opacity: 0;
 }
-
-
-/* Headers */
-h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-}
-h1 {
-    font-size: 75px;
-}
-/* Div to wrap elements with the svg background */
+/*************/
+/*  Headers  */
+/*************/
+h1, h2, h3, h4, h5, h6 { margin: 0; }
+h1 { font-size: 75px; }
+/********************/
+/*  Helper Classes  */
+/********************/
+.hidden { display: none; }
 .fullscreen-image-wrapper {
     position: fixed;
     top: 0;
